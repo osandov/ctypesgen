@@ -43,11 +43,10 @@ def main():
     clang.cindex.Config.set_library_path(os.path.join(clang_prefix, 'lib'))
     index = clang.cindex.Index.create()
 
-    clang.cindex.conf.lib.clang_getClangVersion.restype = ctypes.c_char_p
-
     # We need to find the internal clang header files, which live in
     # $PREFIX/lib/clang/$VERSION/include. This is gross and fragile but I can't
     # think of a better way to do it.
+    clang.cindex.conf.lib.clang_getClangVersion.restype = ctypes.c_char_p
     version_string = clang.cindex.conf.lib.clang_getClangVersion()
     match = re.search(r'\d+(\.\d+)+', version_string)
     assert match
@@ -80,7 +79,7 @@ def main():
         walk(translation_unit.cursor)
 
 
-class Function:
+class Function(object):
     def __init__(self, location, name, return_type, params, has_proto, is_variadic):
         self.location = location
         self.name = name
@@ -96,12 +95,12 @@ class Function:
             print("%s.%s.argtypes = [%s]" % (lib, self.name, ', '.join(argtypes)))
 
 
-class Param:
+class Param(object):
     def __init__(self, type):
         self.type = type
 
 
-class StructOrUnion:
+class StructOrUnion(object):
     def __init__(self, location, name, fields, is_union, is_definition, anon_num=None):
         self.location = location
         self.name = name
@@ -143,14 +142,14 @@ class StructOrUnion:
             print("]")
 
 
-class Field:
+class Field(object):
     def __init__(self, name, type, width):
         self.name = name
         self.type = type
         self.width = width
 
 
-class Typedef:
+class Typedef(object):
     def __init__(self, location, name, type):
         self.location = location
         self.name = name
@@ -160,7 +159,7 @@ class Typedef:
         print("typedef_%s = %s" % (self.name, clang_type_to_ctype(self.type)))
 
 
-class Enum:
+class Enum(object):
     def __init__(self, location, name, enum_type, constants, anon_num=None):
         self.location = location
         self.name = name
@@ -177,13 +176,13 @@ class Enum:
             print("enum_constant_%s = %d" % (constant.name, constant.value))
 
 
-class EnumConstant:
+class EnumConstant(object):
     def __init__(self, name, value):
         self.name = name
         self.value = value
 
 
-class Var:
+class Var(object):
     def __init__(self, location, name, type):
         self.location = location
         self.name = name
@@ -282,21 +281,21 @@ def print_decl(decl):
 
 
 SPECIAL_TYPEDEFS = {
-        'int8_t': 'ctypes.c_int8',
-        'int16_t': 'ctypes.c_int16',
-        'int32_t': 'ctypes.c_int32',
-        'int64_t': 'ctypes.c_int64',
-        'uint8_t': 'ctypes.c_uint8',
-        'uint16_t': 'ctypes.c_uint16',
-        'uint32_t': 'ctypes.c_uint32',
-        'uint64_t': 'ctypes.c_uint64',
-        'size_t': 'ctypes.c_size_t',
-        'ssize_t': 'ctypes.c_ssize_t',
-        'wchar_t': 'ctypes.c_wchar',
-        # It's not nice to be so intimate with the va_list internals, but oh
-        # well, you do what you have to.
-        'va_list': 'ctypes.POINTER(struct___va_list_tag)',
-        '__builtin_va_list': 'ctypes.POINTER(struct___va_list_tag)',
+    'int8_t': 'ctypes.c_int8',
+    'int16_t': 'ctypes.c_int16',
+    'int32_t': 'ctypes.c_int32',
+    'int64_t': 'ctypes.c_int64',
+    'uint8_t': 'ctypes.c_uint8',
+    'uint16_t': 'ctypes.c_uint16',
+    'uint32_t': 'ctypes.c_uint32',
+    'uint64_t': 'ctypes.c_uint64',
+    'size_t': 'ctypes.c_size_t',
+    'ssize_t': 'ctypes.c_ssize_t',
+    'wchar_t': 'ctypes.c_wchar',
+    # It's not nice to be so intimate with the va_list internals, but oh
+    # well, you do what you have to.
+    'va_list': 'ctypes.POINTER(struct___va_list_tag)',
+    '__builtin_va_list': 'ctypes.POINTER(struct___va_list_tag)',
 }
 
 
