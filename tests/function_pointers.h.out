@@ -1,0 +1,29 @@
+import ctypes
+
+libtest = ctypes.CDLL('libtest.so')
+
+typedef_compar_t = ctypes.CFUNCTYPE(ctypes.c_int, ctypes.c_void_p, ctypes.c_void_p)
+
+var_default_cmp = typedef_compar_t.in_dll(libtest, 'default_cmp')
+
+libtest.my_qsort.restype = None
+libtest.my_qsort.argtypes = [ctypes.c_void_p, ctypes.c_ulong, ctypes.c_ulong, typedef_compar_t]
+
+
+class struct_vtable(ctypes.Structure):
+    pass
+struct_vtable._fields_ = [
+    ('cmp', typedef_compar_t),
+    ('add', ctypes.CFUNCTYPE(ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p)),
+]
+
+typedef_meta_t = ctypes.CFUNCTYPE(None, ctypes.CFUNCTYPE(None))
+
+libtest.signal.restype = ctypes.CFUNCTYPE(None, ctypes.c_int)
+libtest.signal.argtypes = [ctypes.c_int, ctypes.CFUNCTYPE(None, ctypes.c_int)]
+
+typedef_noproto_t = ctypes.CFUNCTYPE(ctypes.c_int)
+
+typedef_defaultrettype_t = ctypes.CFUNCTYPE(ctypes.c_int, ctypes.c_char_p)
+
+typedef_blasphemy_t = ctypes.CFUNCTYPE(ctypes.c_int)

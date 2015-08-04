@@ -1,0 +1,42 @@
+import ctypes
+
+libtest = ctypes.CDLL('libtest.so')
+
+libtest.int_types.restype = None
+libtest.int_types.argtypes = [ctypes.c_byte, ctypes.c_short, ctypes.c_int, ctypes.c_long, ctypes.c_longlong]
+
+libtest.intx_types.restype = None
+libtest.intx_types.argtypes = [ctypes.c_int8, ctypes.c_int16, ctypes.c_int32, ctypes.c_int64]
+
+libtest.uint_types.restype = None
+libtest.uint_types.argtypes = [ctypes.c_ubyte, ctypes.c_ushort, ctypes.c_uint, ctypes.c_ulong, ctypes.c_ulonglong]
+
+libtest.uintx_types.restype = None
+libtest.uintx_types.argtypes = [ctypes.c_uint8, ctypes.c_uint16, ctypes.c_uint32, ctypes.c_uint64]
+
+libtest.float_types.restype = None
+libtest.float_types.argtypes = [ctypes.c_float, ctypes.c_double, ctypes.c_longdouble]
+
+libtest.char_types.restype = None
+libtest.char_types.argtypes = [ctypes.c_char, ctypes.c_char_p, typedef_char16_t, ctypes.POINTER(typedef_char16_t), typedef_char32_t, ctypes.POINTER(typedef_char32_t)]
+
+libtest.wchar_types.restype = None
+libtest.wchar_types.argtypes = [ctypes.c_wchar, ctypes.c_wchar_p]
+
+libtest.bool_types.restype = None
+libtest.bool_types.argtypes = [ctypes.c_bool, ctypes.c_bool]
+
+libtest.complex_types.restype = None
+libtest.complex_types.argtypes = [(ctypes.c_float * 2), (ctypes.c_double * 2), (ctypes.c_longdouble * 2)]
+
+libtest.complex_types2.restype = None
+libtest.complex_types2.argtypes = [(ctypes.c_float * 2), (ctypes.c_double * 2), (ctypes.c_longdouble * 2)]
+
+libtest.big_int_types.restype = None
+libtest.big_int_types.argtypes = [(ctypes.c_ubyte * 16), (ctypes.c_ubyte * 16)]
+
+libtest.big_int_typedefs.restype = None
+libtest.big_int_typedefs.argtypes = [typedef___int128_t, typedef___uint128_t]
+
+libtest.size_types.restype = None
+libtest.size_types.argtypes = [ctypes.c_size_t, ctypes.c_ssize_t]

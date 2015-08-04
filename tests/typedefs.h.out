@@ -1,0 +1,73 @@
+import ctypes
+
+libtest = ctypes.CDLL('libtest.so')
+
+typedef_gint = ctypes.c_int
+
+libtest.gint_to_int.restype = ctypes.c_int
+libtest.gint_to_int.argtypes = [typedef_gint]
+
+libtest.int_to_gint.restype = typedef_gint
+libtest.int_to_gint.argtypes = [ctypes.c_int]
+
+enum_color = ctypes.c_uint
+enum_constant_RED = 0
+enum_constant_GREEN = 1
+enum_constant_BLUE = 2
+
+typedef_color_t = enum_color
+
+libtest.rank_color.restype = ctypes.c_int
+libtest.rank_color.argtypes = [typedef_color_t]
+
+libtest.best_color.restype = typedef_color_t
+libtest.best_color.argtypes = []
+
+
+class struct_point(ctypes.Structure):
+    pass
+struct_point._fields_ = [
+    ('x', ctypes.c_int),
+    ('y', ctypes.c_int),
+]
+
+typedef_point_t = struct_point
+
+libtest.add_points.restype = typedef_point_t
+libtest.add_points.argtypes = [typedef_point_t, typedef_point_t]
+
+libtest.add_points2.restype = None
+libtest.add_points2.argtypes = [ctypes.POINTER(typedef_point_t), ctypes.POINTER(typedef_point_t)]
+
+
+class __anon_struct1(ctypes.Structure):
+    pass
+__anon_struct1._fields_ = [
+    ('x', ctypes.c_int),
+    ('y', ctypes.c_int),
+]
+
+typedef_point2_t = __anon_struct1
+
+__anon_enum1 = ctypes.c_uint
+enum_constant_YELLOW = 0
+enum_constant_CYAN = 1
+enum_constant_MAGENTA = 2
+
+typedef_color2_t = __anon_enum1
+
+
+class __anon_union1(ctypes.Union):
+    pass
+__anon_union1._fields_ = [
+    ('s', ctypes.c_char_p),
+    ('i', ctypes.c_int),
+    ('d', ctypes.c_double),
+]
+
+typedef_type_t = __anon_union1
+
+typedef_point_pointer_t = ctypes.POINTER(struct_point)
+
+libtest.process.restype = None
+libtest.process.argtypes = [typedef_point_pointer_t]

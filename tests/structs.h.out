@@ -1,0 +1,51 @@
+import ctypes
+
+libtest = ctypes.CDLL('libtest.so')
+
+
+class struct_point(ctypes.Structure):
+    pass
+struct_point._fields_ = [
+    ('x', ctypes.c_int),
+    ('y', ctypes.c_int),
+]
+
+
+class struct_empty(ctypes.Structure):
+    pass
+
+
+class struct_nested(ctypes.Structure):
+    pass
+struct_nested._fields_ = [
+    ('p', struct_point),
+    ('z', ctypes.c_int),
+]
+
+
+class struct_forward_declaration(ctypes.Structure):
+    pass
+
+libtest.add_points.restype = struct_point
+libtest.add_points.argtypes = [struct_point, struct_point]
+
+libtest.add_points2.restype = None
+libtest.add_points2.argtypes = [ctypes.POINTER(struct_point), ctypes.POINTER(struct_point)]
+
+
+class struct_bitty(ctypes.Structure):
+    pass
+struct_bitty._fields_ = [
+    ('a', ctypes.c_int, 1),
+    ('b', ctypes.c_int, 2),
+    ('c', ctypes.c_int, 4),
+    ('d', ctypes.c_int, 8),
+    ('e', ctypes.c_int, 16),
+]
+
+
+class struct_list(ctypes.Structure):
+    pass
+struct_list._fields_ = [
+    ('next', ctypes.POINTER(struct_list)),
+]

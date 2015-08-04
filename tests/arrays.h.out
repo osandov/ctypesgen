@@ -1,0 +1,14 @@
+import ctypes
+
+libtest = ctypes.CDLL('libtest.so')
+
+typedef_my_complex = (ctypes.c_double * 2)
+
+libtest.my_main.restype = ctypes.c_int
+libtest.my_main.argtypes = [ctypes.c_int, ctypes.POINTER(ctypes.c_char_p)]
+
+typedef_my_complex_3d_point = ((ctypes.c_double * 2) * 3)
+
+typedef_complex_3d_point = ((ctypes.c_double * 2) * 3)
+
+typedef_big_t = ((ctypes.c_ubyte * 16) * 2)

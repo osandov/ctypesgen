@@ -1,0 +1,25 @@
+import ctypes
+
+libtest = ctypes.CDLL('libtest.so')
+
+enum_color = ctypes.c_uint
+enum_constant_RED = 0
+enum_constant_GREEN = 1
+enum_constant_BLUE = 2
+
+enum_more_color = ctypes.c_uint
+enum_constant_YELLOW = 3
+enum_constant_CYAN = 4
+enum_constant_MAGENTA = 5
+enum_constant_BLACK = 10
+
+libtest.rank_color.restype = ctypes.c_int
+libtest.rank_color.argtypes = [enum_color]
+
+libtest.best_color.restype = enum_color
+libtest.best_color.argtypes = []
+
+__anon_enum1 = ctypes.c_uint
+enum_constant_READ = 0
+enum_constant_WRITE = 1
+enum_constant_APPEND = 2

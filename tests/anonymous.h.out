@@ -1,0 +1,59 @@
+import ctypes
+
+libtest = ctypes.CDLL('libtest.so')
+
+
+class __anon_struct1(ctypes.Structure):
+    pass
+__anon_struct1._fields_ = [
+    ('x', ctypes.c_int),
+    ('y', ctypes.c_int),
+]
+
+
+class __anon_struct2(ctypes.Structure):
+    pass
+__anon_struct2._fields_ = [
+    ('mass', ctypes.c_int),
+    ('volume', ctypes.c_int),
+]
+
+
+class __anon_union1(ctypes.Union):
+    pass
+__anon_union1._fields_ = [
+    ('liquid', ctypes.c_int),
+    ('gas', ctypes.c_int),
+]
+
+
+class struct_body(ctypes.Structure):
+    pass
+struct_body._fields_ = [
+    ('point', __anon_struct1),
+    ('size', __anon_struct2),
+    ('state', __anon_union1),
+]
+
+
+class __anon_struct3(ctypes.Structure):
+    pass
+__anon_struct3._fields_ = [
+    ('a', ctypes.c_int),
+]
+
+
+class __anon_struct4(ctypes.Structure):
+    pass
+__anon_struct4._fields_ = [
+    ('A', __anon_struct3),
+    ('b', ctypes.c_int),
+]
+
+
+class struct_nested(ctypes.Structure):
+    pass
+struct_nested._fields_ = [
+    ('B', __anon_struct4),
+    ('c', ctypes.c_int),
+]

@@ -1,0 +1,39 @@
+import ctypes
+
+libtest = ctypes.CDLL('libtest.so')
+
+
+class struct_inner(ctypes.Structure):
+    pass
+struct_inner._fields_ = [
+    ('x', ctypes.c_int),
+    ('y', ctypes.c_int),
+]
+
+
+class struct_outer(ctypes.Structure):
+    pass
+struct_outer._fields_ = [
+    ('p', struct_inner),
+    ('z', ctypes.c_int),
+]
+
+enum_type = ctypes.c_uint
+enum_constant_STRING = 0
+enum_constant_INT = 1
+
+
+class union_var(ctypes.Union):
+    pass
+union_var._fields_ = [
+    ('s', ctypes.c_char_p),
+    ('i', ctypes.c_int),
+]
+
+
+class struct_tagged(ctypes.Structure):
+    pass
+struct_tagged._fields_ = [
+    ('t', enum_type),
+    ('u', union_var),
+]

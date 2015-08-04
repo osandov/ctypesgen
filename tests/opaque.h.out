@@ -1,0 +1,25 @@
+import ctypes
+
+libtest = ctypes.CDLL('libtest.so')
+
+
+class struct_handle(ctypes.Structure):
+    pass
+
+typedef_handle_t = struct_handle
+
+struct_handle._fields_ = [
+    ('name', ctypes.c_char_p),
+]
+
+
+class struct_opaque(ctypes.Structure):
+    pass
+
+typedef_opaque_t = ctypes.POINTER(struct_opaque)
+
+libtest.opaque_new.restype = typedef_opaque_t
+libtest.opaque_new.argtypes = []
+
+libtest.opaque_free.restype = None
+libtest.opaque_free.argtypes = [typedef_opaque_t]
