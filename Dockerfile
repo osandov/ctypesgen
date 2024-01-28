@@ -37,3 +37,5 @@ ENV PYTHONPATH=/opt/llvm-3.6.2/tools/clang/bindings/python
 
 WORKDIR /app
 RUN ./run_tests.sh
+
+ENTRYPOINT ["/app/ctypesgen.py"]
