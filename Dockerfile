@@ -11,7 +11,7 @@ RUN apt-get update && \
                        bison flex libexplain-dev autoconf automake libtool \
                        m4 zlib1g-dev libtinfo-dev libc6-dev g++-7 pep8
 
-ENV LLVM_VER=3.6.2
+ENV LLVM_VER=3.8.1
 
 # Download and install LLVM+Clang ${LLVM_VER} (https://stackoverflow.com/a/53159552)
 RUN cd /tmp && wget -O llvm.tar.xz https://releases.llvm.org/${LLVM_VER}/llvm-${LLVM_VER}.src.tar.xz && \
@@ -33,7 +33,7 @@ COPY ctypesgen.py /app
 COPY run_tests.sh /app
 COPY tests /app/tests
 
-ENV PYTHONPATH=/opt/llvm-3.6.2/tools/clang/bindings/python
+ENV PYTHONPATH=/opt/llvm-${LLVM_VER}/tools/clang/bindings/python
 
 WORKDIR /app
 RUN ./run_tests.sh

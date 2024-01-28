@@ -2,6 +2,8 @@
  
 Automatically generate ctypes bindings using libclang.
 
+The newest LLVM version which ctypegen runs fine with is `3.8.1`, therefore ctypegen is shipped as a Docker container.
+
 
 ## Building
 
