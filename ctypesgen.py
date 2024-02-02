@@ -56,7 +56,7 @@ def main():
 
     print("import ctypes")
     print()
-    lib = args.library.split('.', 1)[0]
+    lib = os.path.basename(args.library).split('.', 1)[0]
     print("%s = ctypes.CDLL('%s')" % (lib, args.library))
 
     args.headers = [os.path.abspath(header) for header in args.headers]
@@ -335,7 +335,10 @@ def clang_type_to_ctype(type):
         # Just treat an int128 as a bag of bytes.
         return '(ctypes.c_ubyte * 16)'
     elif type.kind == TypeKind.LONG:
-        return 'ctypes.c_long'
+        if type.get_size() == 4:
+            return 'ctypes.c_int32'
+        else:
+            return 'ctypes.c_int64'
     elif type.kind == TypeKind.LONGDOUBLE:
         return 'ctypes.c_longdouble'
     elif type.kind == TypeKind.LONGLONG:
