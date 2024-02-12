@@ -27,3 +27,8 @@ Add your own arguments instead of `-v`, according the the usage above:
 bash -c 'docker run -v "$PWD:$PWD" -w "$PWD" ctypesgen-ng <add arguments here>'
 ```
 
+How to pass clang args
+
+```
+./ctypesgen-ng.py --library libtest.so --header test1.h test2.h --clang-flags \"-Wno-error=implicit-int\" \"-std=c99\"
+```

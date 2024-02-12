@@ -40,32 +40,32 @@ libtest.add_points2.restype = None
 libtest.add_points2.argtypes = [ctypes.POINTER(typedef_point_t), ctypes.POINTER(typedef_point_t)]
 
 
-class __anon_struct1(ctypes.Structure):
+class struct_point2_t(ctypes.Structure):
     pass
-__anon_struct1._fields_ = [
+struct_point2_t._fields_ = [
     ('x', ctypes.c_int),
     ('y', ctypes.c_int),
 ]
 
-typedef_point2_t = __anon_struct1
+typedef_point2_t = struct_point2_t
 
-__anon_enum1 = ctypes.c_uint
+enum_color2_t = ctypes.c_uint
 enum_constant_YELLOW = 0
 enum_constant_CYAN = 1
 enum_constant_MAGENTA = 2
 
-typedef_color2_t = __anon_enum1
+typedef_color2_t = enum_color2_t
 
 
-class __anon_union1(ctypes.Union):
+class union_type_t(ctypes.Union):
     pass
-__anon_union1._fields_ = [
+union_type_t._fields_ = [
     ('s', ctypes.c_char_p),
     ('i', ctypes.c_int),
     ('d', ctypes.c_double),
 ]
 
-typedef_type_t = __anon_union1
+typedef_type_t = union_type_t
 
 typedef_point_pointer_t = ctypes.POINTER(struct_point)
 
