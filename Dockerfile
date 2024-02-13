@@ -4,9 +4,8 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Install dependencies
 RUN apt-get update && \
-    apt-get install -y python3 python3-pip clang llvm gcc-mingw-w64
-
-RUN pip3 install --break-system-packages debugpy clang autopep8
+    apt-get install -y python3 python3-pip \
+    python3-clang python3-autopep8 clang llvm gcc-mingw-w64
 
 RUN mkdir /app
 COPY ctypesgen.py /app
