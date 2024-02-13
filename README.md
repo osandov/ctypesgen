@@ -24,7 +24,7 @@ usage: ctypesgen.py [-h] [--clang-path PATH] [--clang-flags FLAGS]
 Add your own arguments instead of `-v`, according the the usage above:
 
 ```
-bash -c 'docker run -v "$PWD:$PWD" -w "$PWD" ctypesgen-ng <add arguments here>'
+./docker_run.sh absolutePathToProject --library library.so --headers headers.h --ignore-included --output library.py
 ```
 
 How to pass clang args

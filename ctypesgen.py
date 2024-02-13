@@ -14,6 +14,17 @@ anon_unions = {}
 anon_enums = {}
 declared = set()
 
+print_ = print
+
+def print(*pargs, **pkwargs):
+    global args
+    if args.output is None:
+        print_(*pargs, **pkwargs)
+    else:
+        with open(args.output, "a+") as fl:
+            print_(*pargs, file=fl, **pkwargs)
+
+
 
 def main():
     global args
@@ -31,6 +42,7 @@ def main():
         '--ignore-included', action='store_true',
         help="don't generate bindings for declarations in included files")
     parser.add_argument('--std', choices=('c89', 'c99', 'c11'), default='c11')
+    parser.add_argument("--output", default=None, help="By default it outputs to stdout, supply this if you want to write to a file")
     args = parser.parse_args()
 
     if not args.clang_path:
