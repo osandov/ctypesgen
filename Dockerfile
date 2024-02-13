@@ -14,9 +14,6 @@ COPY tests /app/tests
 
 WORKDIR /app
 
-RUN CLANG_LIBRARY_PATH=$(llvm-config --libdir) && \
-    echo "CLANG_LIBRARY_PATH=${CLANG_LIBRARY_PATH}" >> ~/.profile
-
 RUN CLANG_LIBRARY_PATH=$(llvm-config --libdir) && ln -s $CLANG_LIBRARY_PATH/libclang-17.so.1 /usr/lib/libclang-17.so
 
 RUN ./run_tests.sh
