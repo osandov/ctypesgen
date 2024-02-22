@@ -21,7 +21,7 @@ libtest.char_types.restype = None
 libtest.char_types.argtypes = [ctypes.c_char, ctypes.c_char_p, typedef_char16_t, ctypes.POINTER(typedef_char16_t), typedef_char32_t, ctypes.POINTER(typedef_char32_t)]
 
 libtest.wchar_types.restype = None
-libtest.wchar_types.argtypes = [ctypes.c_wchar, ctypes.c_wchar_p]
+libtest.wchar_types.argtypes = [ctypes.c_wchar, ctypes.POINTER(ctypes.c_wchar)]
 
 libtest.bool_types.restype = None
 libtest.bool_types.argtypes = [ctypes.c_bool, ctypes.c_bool]

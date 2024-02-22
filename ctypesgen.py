@@ -1,7 +1,4 @@
-#!/usr/bin/env python2
-
-from __future__ import print_function
-
+#!/usr/bin/env python3
 import argparse
 import ctypes
 import clang.cindex
@@ -17,22 +14,35 @@ anon_unions = {}
 anon_enums = {}
 declared = set()
 
+print_ = print
+
+def print(*pargs, **pkwargs):
+    global args
+    if args.output is None:
+        print_(*pargs, **pkwargs)
+    else:
+        with open(args.output, "a+") as fl:
+            print_(*pargs, file=fl, **pkwargs)
+
+
 
 def main():
     global args
     global lib
 
     parser = argparse.ArgumentParser(description='Generate ctypes bindings by parsing C headers')
-    parser.add_argument('library', metavar='LIBRARY', help='shared library file (e.g., libc.so.6)')
-    parser.add_argument('headers', metavar='HEADER', nargs='+', help='headers to parse')
+    parser.add_argument('--library', metavar='LIBRARY', help='shared library file (e.g., libc.so.6)', 
+        type=str)
+    parser.add_argument('--headers', metavar='HEADER', nargs='+', help='headers to parse')
     parser.add_argument('--clang-path', metavar='PATH', help='path to clang executable')
     parser.add_argument(
         '--clang-flags', metavar='FLAGS',
-        help='extra flags to pass to clang (e.g., -I)')
+        help='extra flags to pass to clang (e.g., -I)', nargs="*", default=[])
     parser.add_argument(
         '--ignore-included', action='store_true',
         help="don't generate bindings for declarations in included files")
     parser.add_argument('--std', choices=('c89', 'c99', 'c11'), default='c11')
+    parser.add_argument("--output", default=None, help="By default it outputs to stdout, supply this if you want to write to a file")
     args = parser.parse_args()
 
     if not args.clang_path:
@@ -48,6 +58,8 @@ def main():
     # think of a better way to do it.
     clang.cindex.conf.lib.clang_getClangVersion.restype = ctypes.c_char_p
     version_string = clang.cindex.conf.lib.clang_getClangVersion()
+    if type(version_string) == type(b''):
+        version_string = version_string.decode("utf-8")
     match = re.search(r'\d+(\.\d+)+', version_string)
     assert match
     version = match.group(0)
@@ -56,7 +68,7 @@ def main():
 
     print("import ctypes")
     print()
-    lib = args.library.split('.', 1)[0]
+    lib = os.path.basename(args.library).split('.', 1)[0]
     print("%s = ctypes.CDLL('%s')" % (lib, args.library))
 
     args.headers = [os.path.abspath(header) for header in args.headers]
@@ -64,7 +76,10 @@ def main():
 
     clang_args = ['-x', 'c', '-std=%s' % args.std, '-I', internal_includes]
     if args.clang_flags:
-        clang_args.extend(args.clang_flags.split())
+        for flag in args.clang_flags:
+            if not " " in flag:
+                flag = flag.replace("\"", "")
+            clang_args.append(flag)
     translation_unit = index.parse(
         'unsaved', args=clang_args, unsaved_files=[('unsaved', unsaved_file)])
 
@@ -193,6 +208,10 @@ class Var(object):
         print("var_%s = %s.in_dll(%s, '%s')" % (self.name, ctype, lib, self.name))
 
 
+def isValidSpelling(spelling):
+    # If the spleeing is none or has spaces it isn't valid
+    return spelling and ' ' not in spelling
+
 def walk(node):
     print_decl(StructOrUnion(None, '__va_list_tag', [], False, False))
 
@@ -224,7 +243,7 @@ def walk(node):
                 fields.append(walk(c))
         is_union = node.kind == CursorKind.UNION_DECL
         is_definition = node.is_definition()
-        if node.spelling:
+        if isValidSpelling(node.spelling):
             return StructOrUnion(node.location, node.spelling, fields, is_union, is_definition)
         else:
             anon_records = anon_unions if is_union else anon_structs
@@ -244,7 +263,7 @@ def walk(node):
         for c in node.get_children():
             if c.kind == CursorKind.ENUM_CONSTANT_DECL:
                 constants.append(walk(c))
-        if node.spelling:
+        if isValidSpelling(node.spelling):
             return Enum(node.location, node.spelling, node.enum_type, constants)
         else:
             enum = Enum(node.location, None, node.enum_type, constants, len(anon_enums) + 1)
@@ -292,6 +311,8 @@ SPECIAL_TYPEDEFS = {
     'size_t': 'ctypes.c_size_t',
     'ssize_t': 'ctypes.c_ssize_t',
     'wchar_t': 'ctypes.c_wchar',
+    'ptrdiff_t': 'ctypes.c_void_p',
+    'uintptr_t': 'ctypes.c_void_p',
     # It's not nice to be so intimate with the va_list internals, but oh
     # well, you do what you have to.
     'va_list': 'ctypes.POINTER(struct___va_list_tag)',
@@ -364,7 +385,7 @@ def clang_type_to_ctype(type):
             anon_records = anon_unions
         else:
             assert False, decl.kind
-        if decl.spelling:
+        if isValidSpelling(decl.spelling):
             return '%s_%s' % (kind, decl.spelling)
         else:
             return '__anon_%s%d' % (kind, anon_records[decl.hash].anon_num)
@@ -392,6 +413,8 @@ def clang_type_to_ctype(type):
         return 'ctypes.c_ushort'
     elif type.kind == TypeKind.VOID:
         return 'None'
+    elif type.kind == TypeKind.ELABORATED:
+        return clang_type_to_ctype(type.get_named_type())
     else:
         assert False, type.kind
 
